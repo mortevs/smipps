@@ -26,42 +26,6 @@ class main_page_GUI:
             color: white !important;
         }
         </style>""", unsafe_allow_html=True)
-        col1, col2, col3, col4, col5 = st.columns(5)
-        def write_timestamp_to_file(timestamp):
-            data_dir = "Data"
-            try:
-                with open(os.path.join(data_dir, "timestamp.txt"), "w") as file:
-                    file.write(str(timestamp))
-            except:
-                pass
-        def read_timestamp_from_file():
-            data_dir = "Data"
-            timestamp_file = os.path.join(data_dir, "timestamp.txt")
-            if os.path.exists(timestamp_file):
-                with open(timestamp_file, "r") as file:
-                    timestamp = file.read()
-                    return timestamp
-            else:
-                return "NA"
-
-        with col5:
-            load = st.button('Load New Data from Sodir',  'sodir')
-        if load:
-            from Data.getData import deleteAndLoadNewDataFromNPD
-            if deleteAndLoadNewDataFromNPD() == True:
-                timestamp = time.ctime()
-                alert00 = st.warning('Data downloaded from Sodir ' + timestamp)
-                time.sleep(5)
-                alert00.empty()
-                write_timestamp_to_file(timestamp)
-
-        #with col4:
-            #try:
-                #stamp = read_timestamp_from_file()
-                #mym = "Data last downloaded:" + str(stamp)
-                #st.write(mym)
-            #except:
-             #   pass
         
         st.title('Sodir Data')
         st.write(" ")

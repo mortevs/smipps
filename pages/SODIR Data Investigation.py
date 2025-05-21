@@ -2,8 +2,10 @@ import streamlit as st
 import pages.GUI.GUI_functions as GUI
 import Data.getData as get
 from Data.dataProcessing import get_field_list_inc_No_field_chosen, get_all_company_list
+import time as time
 import time as t
-import os
+import Data.Storage.Cache as c
+
 
 
 class SODIR_feature:
@@ -16,26 +18,6 @@ class SODIR_feature:
             st.warning("could not get list of fieldnames/Company names from SODIR")
             self.__fieldnames = ["None"]
             self._companynames = ['None']
-            on_information = st.toggle("Show me information on how to use the SODIR data feature", value=False, label_visibility="visible")
-            
-            if on_information:
-                st.write(""" Choose a field or company from the NCS from the dropdown menus below. Choose a timeframe (yearly or montly) from the
-                        dropdown menu to the right (by default monthly). Now press Plot production profile to display the produced volumes. By default, the oil equivalents are
-                        visualized, but from the plots dropdown menu the user can choose to display NGL, oil, condendsate, Oil equivilants,
-                        water volumes, cumulative volumes and the gas rate.""")
-                st.write(""" To compare fields follow these steps: Step 1 - Choose a field, Step 2 - Press Plot production profile, Step 3 -
-                        choose a new field, Step 4 - press Plot production profile again, Step 5 - press Compare fields. Keep the same timeframe,
-                        dont change between years and months when comparing multiple fields. Compare year with year or month by month, not year with month, it will
-                        result in poor comparisons.
-                        """)
-                st.write(""" Click clear output to remove all the plots and start over again""")
-
-                st.write(""" Click Plot reservoir area to plot a polygon of the reservor area with the wells for the chosen field.
-                        The wells can be toggled on and off. By default the closed, and pluggend and abandonend are not shown.
-                        To use the forecast functionality, you must first choose a field and click show produced volumes. These data will then be used in 
-                        the forecast analysis. Multiple fields can be forecasted at the same time. """)
-                st.write(""" Navigate in the tabs""")
-
 
         from Modules.SODIR_DATA.Sodir_data import Sodir_prod
         sodir_obj = Sodir_prod(parent = SODIR_feature, session_id='sodir_prod', field = 'No field chosen')
@@ -51,11 +33,11 @@ class SODIR_feature:
         sodir_obj.updateFromDropDown(fieldName = self.__field, time = self.__time, align = align, company = self.__company)
         col6, colmid, col7  = st.columns(3)
         with col6:
-            run = st.button('Show Produced Field Volumes', 'Show produced volumes', use_container_width=True)
+            run = st.button('Show Field Volumes', 'Show produced volumes', use_container_width=True)
         with colmid:
-            runCompany = st.button('Show Produced Company Volumes', 'Show produced company vol', use_container_width=True)
+            runCompany = st.button('Show Company Volumes', 'Show produced company vol', use_container_width=True)
         with col7:
-            comp = st.button('Compare Fields/Companies', 'Compare', use_container_width=True)
+            comp = st.button('Compare Fields and Companies', 'Compare', use_container_width=True)
         col8, col9 = st.columns(2)
         with col8:
             poly_button = st.button('Show Reservoir Area', 'polygon plotter', use_container_width=True)
@@ -69,7 +51,7 @@ class SODIR_feature:
                 t.sleep(1.5)
                 alert3.empty()
             elif runCompany and self.__company == 'No company chosen':
-                alert3 = st.warning('Choose a field/company first')
+                alert3 = st.warning('Choose a company first')
                 t.sleep(1.5)
                 alert3.empty()
         with tab2:
@@ -211,52 +193,43 @@ class SODIR_feature:
                         
                         parent.plot_forecast(self.__res_forecast)
 
-    email_address = "morten.viersi@gmail.com"
-    email_subject_Help = "Get help with the application"
-    email_body_Help = "Hi Morten, \n\n I need help with using the Application. I need help with the following: .........."
-    email_subject_BUG = "Report a Bug"
-    email_body_BUG = "Hi Morten, \n\n I'm sending you an email experiencing a bug while using the SMIPPS Application. I experienced the bug after performing the following steps .........."
-    email_link_Help = f"mailto:{email_address}?subject={email_subject_Help}&body={email_body_Help}"
-    email_link_BUG = f"mailto:{email_address}?subject={email_subject_BUG}&body={email_body_BUG}"
 
-    st.set_page_config(
-            page_title="Pareto",
-            layout="wide",
-            page_icon=":billed_cap:",
-            menu_items={'Get Help': email_link_Help,
-            'Report a bug': email_link_BUG,
-            'About': "# Project by Morten Vier Simensen"
-        }
-            )
-    m = st.markdown("""
-        <style>
-        div.stButton > button:first-child {
-            background-color: rgb(34, 44, 92)!important;
-            color: white !important;
-        }
-        </style>""", unsafe_allow_html=True)
 
-# email_address = "morten.viersi@gmail.com"
-# email_subject_Help = "Get help with the SMIPPS application"
-# email_body_Help = "Hi Morten, \n\n I need help with using the SMIPPS Application. I need help with the following: .........."
-# email_subject_BUG = "Report a SMIPPS Bug"
-# email_body_BUG = "Hi Morten, \n\n I'm sending you an email experiencing a bug while using the SMIPPS Application. I experienced the bug after performing the following steps .........."
-# email_link_Help = f"mailto:{email_address}?subject={email_subject_Help}&body={email_body_Help}"
-# email_link_BUG = f"mailto:{email_address}?subject={email_subject_BUG}&body={email_body_BUG}"
+email_address = "morten.viersi@gmail.com"
+email_subject_Help = "Get help with the application"
+email_body_Help = "Hi Morten, \n\n I need help with using the Application. I need help with the following: .........."
+email_subject_BUG = "Report a Bug"
+email_body_BUG = "Hi Morten, \n\n I'm sending you an email experiencing a bug while using the SMIPPS Application. I experienced the bug after performing the following steps .........."
+email_link_Help = f"mailto:{email_address}?subject={email_subject_Help}&body={email_body_Help}"
+email_link_BUG = f"mailto:{email_address}?subject={email_subject_BUG}&body={email_body_BUG}"
 
-# st.set_page_config(
-#     page_title="Smipps",
-#     layout="wide",
-#     page_icon=":wrench:",
-#     menu_items={'Get Help': email_link_Help,
-#     'Report a bug': email_link_BUG,
-#     'About': "# Master project by Morten Vier Simensen"}
-#     )
-# m = st.markdown("""
-# <style>
-# div.stButton > button:first-child {
-#     background-color: rgb(264, 49, 49);
-# }
-# </style>""", unsafe_allow_html=True)
+st.set_page_config(
+        page_title="Pareto",
+        layout="wide",
+        page_icon=":billed_cap:",
+        menu_items={'Get Help': email_link_Help,
+        'Report a bug': email_link_BUG,
+        'About': "# Project by Morten Vier Simensen"
+    }
+        )
+m = st.markdown("""
+    <style>
+    div.stButton > button:first-child {
+        background-color: rgb(34, 44, 92)!important;
+        color: white !important;
+    }
+    </style>""", unsafe_allow_html=True)
+    
+col1, col2, col3, col4 = st.columns(4)
+with col4:
+    load = st.button('Load New Sodir Data',  'sodir')
+if load==True:
+    c.delete_files()
+    timestamp = time.ctime()
+    alert5 = st.warning('Deleteting and loading new Sodir data: ' + timestamp)
+    time.sleep(3)
+    alert5.empty()
+
 st.title('Sodir Data Investigation')
+
 NPD_DATA = SODIR_feature()

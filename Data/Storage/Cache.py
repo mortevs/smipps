@@ -17,7 +17,6 @@ def CacheDF(df, key):
         return loadDict(key)
     else:
         dumpDict(df, key)
-
         return loadDict(key)
         
 # def checkKeyCached(key): #this code did not work as intended as is outdated
@@ -89,6 +88,8 @@ def delete_files():
         file_path = os.path.join(data_storage_folder, file)
         if os.path.exists(file_path):
             os.remove(file_path)
+        
+    
 
 def clear_state(state:SessionState):
     state.result = []
@@ -97,9 +98,7 @@ def clear_state(state:SessionState):
     state.field = []
 
 def clear_state2(state:SessionState):
-    state.result = []
+    #state.result = []
     state.time_frame = []
     state.production_data = []
     state.field = []
-
-    

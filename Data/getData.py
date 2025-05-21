@@ -134,7 +134,7 @@ def Ownerships(company):
 
 def CSVProductionMonthly(fieldName: str):
     if c.checkKeyinDict('monthlyProduction'):
-        p = c.CacheDF(df = None, key ='monthlyProduction')  
+        p = c.CacheDF(df = None, key ='monthlyProduction') 
     else:
         csvURL = 'https://factpages.sodir.no/public?/Factpages/external/tableview/field_production_monthly&rs:Command=Render&rc:Toolbar=false&rc:Parameters=f&IpAddress=not_used&CultureCode=nb-no&rs:Format=CSV&Top100=false'
         response = requests.get(csvURL)
